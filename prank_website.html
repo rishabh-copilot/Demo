@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prank</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Login */
+#login-page {
+    background: #f0f2f5;
+}
+
+.login-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Prank */
+#prank-page {
+    display: none;
+    background: #fce4ec;
+}
+
+.btn-container {
+    position: relative;
+    margin-top: 40px;
+}
+
+button {
+    padding: 15px 35px;
+    font-size: 18px;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+#yes-btn {
+    background: green;
+    color: white;
+    position: relative;
+}
+
+#no-btn {
+    background: red;
+    color: white;
+    position: absolute;
+    left: 150px;
+    transition: all 0.12s linear;
+}
+</style>
+</head>
+
+<body>
+
+<div id="login-page" class="page-wrapper">
+    <div class="login-card">
+        <h2>Verification</h2>
+        <button onclick="start()">Continue</button>
+    </div>
+</div>
+
+<div id="prank-page" class="page-wrapper">
+    <h1>Are you my friend or not?</h1>
+    <div class="btn-container">
+        <button id="yes-btn" onclick="win()">YES</button>
+        <button id="no-btn">NO</button>
+    </div>
+</div>
+
+<script>
+const login = document.getElementById("login-page");
+const prank = document.getElementById("prank-page");
+const yes = document.getElementById("yes-btn");
+const no = document.getElementById("no-btn");
+
+let yesScale = 1;
+let noScale = 1;
+let stage = 1;
+let hoverCount = 0;
+
+function start() {
+    login.style.display = "none";
+    prank.style.display = "flex";
+}
+
+no.addEventListener("mouseover", () => {
+    hoverCount++;
+
+    const rect = yes.getBoundingClientRect();
+    let x, y;
+
+    if (stage === 1) {
+        x = Math.random() * window.innerWidth;
+        y = Math.random() * window.innerHeight;
+        if (hoverCount > 5) stage = 2;
+    }
+    else if (stage === 2) {
+        x = rect.left + (Math.random() * 200 - 100);
+        y = rect.top + (Math.random() * 200 - 100);
+        if (hoverCount > 12) stage = 3;
+    }
+    else if (stage === 3) {
+        x = rect.left + Math.random() * rect.width;
+        y = rect.top + Math.random() * rect.height;
+        if (hoverCount > 20) stage = 4;
+    }
+    else if (stage === 4) {
+        let angle = Date.now() / 200;
+        let radius = rect.width / 2;
+        x = rect.left + rect.width/2 + Math.cos(angle) * radius;
+        y = rect.top + rect.height/2 + Math.sin(angle) * radius;
+        if (hoverCount > 35) stage = 5;
+    }
+    else {
+        x = rect.left + (Math.random() * rect.width);
+        y = rect.top + (Math.random() * rect.height);
+    }
+
+    no.style.position = "fixed";
+    no.style.left = x + "px";
+    no.style.top = y + "px";
+
+    yesScale += 0.15;
+    noScale -= 0.05;
+
+    if (noScale < 0.15) noScale = 0.15;
+    if (yesScale > 12) yesScale = 12;
+
+    yes.style.transform = `scale(${yesScale})`;
+    no.style.transform = `scale(${noScale})`;
+});
+
+function win() {
+    document.body.innerHTML = `
+        <div style="display:flex;justify-content:center;align-items:center;height:100vh;background:green;color:white;font-size:3rem;">
+            YOU WIN!
+        </div>
+    `;
+}
+</script>
+
+</body>
+</html>
